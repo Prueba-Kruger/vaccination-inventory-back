@@ -1,0 +1,141 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="romario" id="0000-0000-0001">
+        <createTable tableName="users">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="users_pkey"/>
+            </column>
+            <column name="dni" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_name" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="romario" id="0000-0000-0002">
+        <createTable tableName="users_roles">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="users_roles_pkey"/>
+            </column>
+            <column name="role_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="users_roles_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="romario" id="0000-0000-0003">
+        <createTable tableName="roles">
+            <column name="role_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="roles_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="romario" id="0000-0000-0004">
+        <createTable tableName="roles_permissions">
+            <column name="roles_role_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="roles_permissions_pkey"/>
+            </column>
+            <column name="permissions_permission_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="roles_permissions_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="romario" id="0000-0000-0005">
+        <createTable tableName="permissions">
+            <column name="permission_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="permissions_pkey"/>
+            </column>
+            <column name="domain_action" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="romario" id="0000-0000-0006">
+        <createTable tableName="employees">
+            <column name="employee_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="employees_pkey"/>
+            </column>
+            <column name="dni" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="mail" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_of_birth" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="0000-0000-0007" author="romario">
+        <createTable tableName="vaccines">
+            <column name="vaccine_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="vaccines_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="romario" id="0000-0000-0008">
+        <createTable tableName="employees_vaccines">
+            <column name="employee_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="employees_vaccines_pkey"/>
+            </column>
+            <column name="vaccine_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="employees_vaccines_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="romario" id="0000-0000-0009">
+        <addColumn tableName="users">
+            <column name="employee_id" type="UUID">
+                <constraints nullable="true"></constraints>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="employee_id" baseTableName="users"
+                                 constraintName="fk_employee_user" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="employee_id"
+                                 referencedTableName="employees" validate="true"/>
+    </changeSet>
+    <changeSet author="romario" id="0000-0000-0010">
+        <addColumn tableName="employees_vaccines">
+            <column name="date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+            <column name="dose" type="VARCHAR(255)"></column>
+        </addColumn>
+    </changeSet>
+
+
+</databaseChangeLog>
