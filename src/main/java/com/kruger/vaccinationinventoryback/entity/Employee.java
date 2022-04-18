@@ -46,10 +46,11 @@ public class Employee {
 
     private String status;
 
-    @ManyToMany()
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     @Builder.Default
-    @JoinTable(name = "employees_vaccines",
-            joinColumns = { @JoinColumn(name = "employee_id") },
-            inverseJoinColumns = { @JoinColumn(name = "vaccine_id") })
-    private Set<Vaccine> vaccines= new HashSet<>();
+    private Set<EmployeeVaccine> employeeVaccines = new HashSet<>();
+
+
+
+
 }

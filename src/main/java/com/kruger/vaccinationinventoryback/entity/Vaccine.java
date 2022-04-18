@@ -5,6 +5,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -27,5 +29,9 @@ public class Vaccine {
     private String name;
 
     private String description;
+
+    @OneToMany(mappedBy = "vaccine", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<EmployeeVaccine> employeeVaccines = new HashSet<>();
 
 }

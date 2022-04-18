@@ -1,9 +1,11 @@
 package com.kruger.vaccinationinventoryback.service.impl;
 
 import com.kruger.vaccinationinventoryback.entity.Employee;
+import com.kruger.vaccinationinventoryback.entity.EmployeeVaccine;
 import com.kruger.vaccinationinventoryback.entity.Vaccine;
 import com.kruger.vaccinationinventoryback.presentation.Paginator;
 import com.kruger.vaccinationinventoryback.presentation.presenter.EmployeePresenter;
+import com.kruger.vaccinationinventoryback.presentation.presenter.EmployeeVaccinePresenter;
 import com.kruger.vaccinationinventoryback.presentation.presenter.VaccinePresenter;
 import com.kruger.vaccinationinventoryback.repository.EmployeeRepository;
 import com.kruger.vaccinationinventoryback.service.EmployeeService;
@@ -46,9 +48,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeePresenter toEmployeePresenter(Employee employee) {
-        List<VaccinePresenter> vaccinePresenters = new ArrayList<>();
-        employee.getVaccines().forEach(vaccine -> {
-            vaccinePresenters.add(toVaccinePresenter(vaccine));
+        List<EmployeeVaccinePresenter> employeeVaccinePresenter = new ArrayList<>();
+        employee.getEmployeeVaccines().forEach(vaccine -> {
+            employeeVaccinePresenter.add(toEmployeeVaccinePresenter(vaccine));
         });
         return EmployeePresenter.builder()
                 .employeeId(employee.getEmployeeId())
@@ -60,7 +62,17 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .address(employee.getAddress())
                 .phone(employee.getPhone())
                 .status(employee.getStatus())
-                .vaccinePresenters(vaccinePresenters)
+                .employeeVaccinePresenters(employeeVaccinePresenter)
+                .build();
+    }
+
+    @Override
+    public EmployeeVaccinePresenter toEmployeeVaccinePresenter(EmployeeVaccine employeeVaccine) {
+        return EmployeeVaccinePresenter.builder()
+                .employeeVaccineId(employeeVaccine.getEmployeeVaccineId())
+                .date(employeeVaccine.getDate())
+                .dose(employeeVaccine.getDose())
+                .vaccinePresenter(toVaccinePresenter(employeeVaccine.getVaccine()))
                 .build();
     }
 

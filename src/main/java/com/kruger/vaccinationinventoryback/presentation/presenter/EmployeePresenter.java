@@ -29,5 +29,5 @@ public class EmployeePresenter {
     private String phone;
     private String status;
     @Builder.Default
-    private List<VaccinePresenter> vaccinePresenters = new ArrayList<>();
+    private List<EmployeeVaccinePresenter> employeeVaccinePresenters = new ArrayList<>();
 }

@@ -7,9 +7,7 @@ crear una base de datos postgres llamada vaccination
 
 ejecutar 
 
-INSERT INTO public.employees
-(employee_id, dni, first_name, last_name, mail, date_of_birth, address, phone, status)
-VALUES('24a90ba6-116c-4d93-9a98-e0cbb806c7db', '1234567891', 'Romario', 'Aponte', '12312', '1996-10-15 08:53:46.000', 'ambato', '123456', 'VACUNADO');
+
 INSERT INTO public.users
 (user_id, dni, full_name, "password", username, employee_id)
 VALUES('a8c03e41-41d8-445d-ac66-bf793da063db', '1803921285', 'romario aponte', '123456', 'romario.aponte', '24a90ba6-116c-4d93-9a98-e0cbb806c7db');
@@ -19,25 +17,25 @@ INSERT INTO public.vaccines
 VALUES('01e67784-f6ef-48ed-a9d2-8a66f812db86', 'Sputnik', 'Sputnik');
 INSERT INTO public.vaccines
 (vaccine_id, "name", description)
-VALUES('e25d37d3-620c-4f05-ada1-62b3c8712268', 'Sputnik', 'Sputnik');
+VALUES('e25d37d3-620c-4f05-ada1-62b3c8712268', 'AstraZeneca', 'AstraZeneca');
 INSERT INTO public.vaccines
 (vaccine_id, "name", description)
 VALUES('271521d7-7c44-49a0-9dee-e319e7c28e0c', 'Pfizer', 'Pfizer');
 INSERT INTO public.vaccines
 (vaccine_id, "name", description)
-VALUES('a899fd0a-6a3c-4704-8158-a0c7fac018ed', 'Jhonson&Jhonson', 'Jhonson&Jhonson');
 INSERT INTO public.employees_vaccines
-(employee_id, vaccine_id, "date", dose)
-VALUES('24a90ba6-116c-4d93-9a98-e0cbb806c7db', '01e67784-f6ef-48ed-a9d2-8a66f812db86', NULL, NULL);
+(employee_vaccine_id, employee_id, vaccine_id, "date", dose)
+VALUES('482201b5-fa07-43ad-8322-c18f433d2095', '24a90ba6-116c-4d93-9a98-e0cbb806c7db', '01e67784-f6ef-48ed-a9d2-8a66f812db86', '2022-10-15 08:53:46.000', '1');
 INSERT INTO public.employees_vaccines
-(employee_id, vaccine_id, "date", dose)
-VALUES('24a90ba6-116c-4d93-9a98-e0cbb806c7db', 'e25d37d3-620c-4f05-ada1-62b3c8712268', NULL, NULL);
+(employee_vaccine_id, employee_id, vaccine_id, "date", dose)
+VALUES('448cc08b-7770-4355-94d8-f86ee685f125', '24a90ba6-116c-4d93-9a98-e0cbb806c7db', 'e25d37d3-620c-4f05-ada1-62b3c8712268', '2022-10-15 08:53:46.000', '2');
 INSERT INTO public.employees_vaccines
-(employee_id, vaccine_id, "date", dose)
-VALUES('24a90ba6-116c-4d93-9a98-e0cbb806c7db', '271521d7-7c44-49a0-9dee-e319e7c28e0c', NULL, NULL);
+(employee_vaccine_id, employee_id, vaccine_id, "date", dose)
+VALUES('a8776fb6-3f83-4291-9826-d0d000f543b4', '24a90ba6-116c-4d93-9a98-e0cbb806c7db', '271521d7-7c44-49a0-9dee-e319e7c28e0c', '2022-10-15 08:53:46.000', '3');
 INSERT INTO public.employees_vaccines
-(employee_id, vaccine_id, "date", dose)
-VALUES('24a90ba6-116c-4d93-9a98-e0cbb806c7db', 'a899fd0a-6a3c-4704-8158-a0c7fac018ed', NULL, NULL);
+(employee_vaccine_id, employee_id, vaccine_id, "date", dose)
+VALUES('e2142d87-1848-49cc-b095-783b6d55650d', '24a90ba6-116c-4d93-9a98-e0cbb806c7db', 'a899fd0a-6a3c-4704-8158-a0c7fac018ed', '2022-10-15 08:53:46.000', '4');
+
 
 INSERT INTO public.roles
 (role_id, "name")

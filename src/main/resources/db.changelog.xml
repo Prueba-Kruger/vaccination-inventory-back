@@ -62,7 +62,6 @@
             </column>
         </createTable>
     </changeSet>
-
     <changeSet author="romario" id="0000-0000-0006">
         <createTable tableName="employees">
             <column name="employee_id" type="UUID">
@@ -92,8 +91,7 @@
             <column name="status" type="varchar(255)"/>
         </createTable>
     </changeSet>
-
-    <changeSet id="0000-0000-0007" author="romario">
+    <changeSet author="romario" id="0000-0000-0007">
         <createTable tableName="vaccines">
             <column name="vaccine_id" type="UUID">
                 <constraints primaryKey="true" primaryKeyName="vaccines_pkey"/>
@@ -108,17 +106,6 @@
     </changeSet>
 
     <changeSet author="romario" id="0000-0000-0008">
-        <createTable tableName="employees_vaccines">
-            <column name="employee_id" type="UUID">
-                <constraints primaryKey="true" primaryKeyName="employees_vaccines_pkey"/>
-            </column>
-            <column name="vaccine_id" type="UUID">
-                <constraints primaryKey="true" primaryKeyName="employees_vaccines_pkey"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet author="romario" id="0000-0000-0009">
         <addColumn tableName="users">
             <column name="employee_id" type="UUID">
                 <constraints nullable="true"></constraints>
@@ -130,12 +117,25 @@
                                  referencedColumnNames="employee_id"
                                  referencedTableName="employees" validate="true"/>
     </changeSet>
-    <changeSet author="romario" id="0000-0000-0010">
-        <addColumn tableName="employees_vaccines">
-            <column name="date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
+
+    <changeSet author="romario" id="0000-0000-0009">
+        <createTable tableName="employees_vaccines">
+            <column name="employee_vaccine_id" type="UUID">
+                <constraints primaryKey="true" primaryKeyName="employees_vaccines_pkey"/>
+            </column>
+            <column name="employee_id" type="UUID"></column>
+            <column name="vaccine_id" type="UUID"></column>
+            <column name="date" type="VARCHAR(255)"></column>
             <column name="dose" type="VARCHAR(255)"></column>
-        </addColumn>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="employee_id" baseTableName="employees_vaccines"
+                                 constraintName="fkrf3c1s9gxxx0wubkv5maokv9y" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="employee_id" referencedTableName="employees" validate="true"/>
+
+        <addForeignKeyConstraint baseColumnNames="vaccine_id" baseTableName="employees_vaccines"
+                                 constraintName="fke4vrxejsfcg9xna1bvwmeyn9p" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="vaccine_id" referencedTableName="vaccines" validate="true"/>
     </changeSet>
-
-
 </databaseChangeLog>
