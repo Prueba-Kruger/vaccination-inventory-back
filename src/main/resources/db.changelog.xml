@@ -125,7 +125,7 @@
             </column>
             <column name="employee_id" type="UUID"></column>
             <column name="vaccine_id" type="UUID"></column>
-            <column name="date" type="VARCHAR(255)"></column>
+            <column name="date" type="TIMESTAMP WITHOUT TIME ZONE"></column>
             <column name="dose" type="VARCHAR(255)"></column>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="employee_id" baseTableName="employees_vaccines"

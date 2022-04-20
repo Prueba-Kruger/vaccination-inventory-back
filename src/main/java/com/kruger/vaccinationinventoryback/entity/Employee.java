@@ -1,5 +1,6 @@
 package com.kruger.vaccinationinventoryback.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sun.istack.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,6 +39,7 @@ public class Employee {
     @NotNull
     private String mail;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date dateOfBirth;
 
     private String address;

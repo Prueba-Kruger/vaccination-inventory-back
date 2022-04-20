@@ -24,7 +24,7 @@ public class EmployeePresenter {
     private String firstName;
     private String lastName;
     private String mail;
-    private Date dateOfBirth;
+    private String dateOfBirth;
     private String address;
     private String phone;
     private String status;

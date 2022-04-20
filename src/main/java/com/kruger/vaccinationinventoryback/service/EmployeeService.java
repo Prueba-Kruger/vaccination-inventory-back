@@ -9,17 +9,20 @@ import com.kruger.vaccinationinventoryback.presentation.presenter.EmployeeVaccin
 import com.kruger.vaccinationinventoryback.presentation.presenter.VaccinePresenter;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.UUID;
 
 public interface EmployeeService {
 
-    Paginator getEmployeesPaginated(String searchValue, Pageable pageable);
+    Paginator getEmployeesPaginated(String searchValue, Date initDate, Date endDate,String[] status, Pageable pageable);
 
     EmployeePresenter getEmployeeById(UUID employeeId);
 
     EmployeePresenter toEmployeePresenter(Employee workOrder);
 
-    VaccinePresenter toVaccinePresenter(Vaccine vaccine);
-
     EmployeeVaccinePresenter toEmployeeVaccinePresenter(EmployeeVaccine employeeVaccine);
+
+    EmployeeVaccine toEmployeeVaccine(EmployeeVaccinePresenter employeeVaccinePresenter);
+
+    EmployeePresenter saveUpdateEmployee(EmployeePresenter employeePresenter);
 }

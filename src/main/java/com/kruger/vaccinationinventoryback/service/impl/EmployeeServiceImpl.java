@@ -2,13 +2,14 @@ package com.kruger.vaccinationinventoryback.service.impl;
 
 import com.kruger.vaccinationinventoryback.entity.Employee;
 import com.kruger.vaccinationinventoryback.entity.EmployeeVaccine;
-import com.kruger.vaccinationinventoryback.entity.Vaccine;
 import com.kruger.vaccinationinventoryback.presentation.Paginator;
 import com.kruger.vaccinationinventoryback.presentation.presenter.EmployeePresenter;
 import com.kruger.vaccinationinventoryback.presentation.presenter.EmployeeVaccinePresenter;
-import com.kruger.vaccinationinventoryback.presentation.presenter.VaccinePresenter;
 import com.kruger.vaccinationinventoryback.repository.EmployeeRepository;
 import com.kruger.vaccinationinventoryback.service.EmployeeService;
+import com.kruger.vaccinationinventoryback.service.EmployeeVaccineService;
+import com.kruger.vaccinationinventoryback.service.VaccineService;
+import com.kruger.vaccinationinventoryback.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -26,10 +29,30 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private VaccineService vaccineService;
+
+    @Autowired
+    private EmployeeVaccineService employeeVaccineService;
+
 
     @Override
-    public Paginator getEmployeesPaginated(String searchValue, Pageable pageable) {
-        Page<Employee> employees = employeeRepository.findByFilters(searchValue, pageable);
+    public Paginator getEmployeesPaginated(String searchValue, Date initDate, Date endDate, String[] status, Pageable pageable) {
+        if (initDate != null) {
+            initDate = DateUtils.instance().asDate(
+                    DateUtils.instance().asLocalDateTime(initDate)
+                            .withHour(0).withSecond(0).withMinute(0).withNano(0)
+            );
+        }
+        if (endDate != null) {
+            endDate = DateUtils.instance().asDate(
+                    DateUtils.instance().asLocalDateTime(endDate).withHour(23).withMinute(59).withSecond(59).withNano(0)
+            );
+        }
+        if ((initDate != null && endDate != null) && initDate.compareTo(endDate) > 0) {
+            throw new RuntimeException("Error en el rango de fechas");
+        }
+        Page<Employee> employees = employeeRepository.findByFilters(searchValue, initDate, endDate, status, pageable);
         List<EmployeePresenter> employeePresenters = new ArrayList<>();
         employees.getContent().forEach(employee -> {
             employeePresenters.add(toEmployeePresenter(employee));
@@ -58,7 +81,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .firstName(employee.getFirstName())
                 .lastName(employee.getLastName())
                 .mail(employee.getMail())
-                .dateOfBirth(employee.getDateOfBirth())
+                .dateOfBirth(employee.getDateOfBirth().toString())
                 .address(employee.getAddress())
                 .phone(employee.getPhone())
                 .status(employee.getStatus())
@@ -70,19 +93,65 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeVaccinePresenter toEmployeeVaccinePresenter(EmployeeVaccine employeeVaccine) {
         return EmployeeVaccinePresenter.builder()
                 .employeeVaccineId(employeeVaccine.getEmployeeVaccineId())
-                .date(employeeVaccine.getDate())
+                .date(employeeVaccine.getDate().toString())
                 .dose(employeeVaccine.getDose())
-                .vaccinePresenter(toVaccinePresenter(employeeVaccine.getVaccine()))
+                .vaccinePresenter(vaccineService.toVaccinePresenter(employeeVaccine.getVaccine()))
                 .build();
     }
 
     @Override
-    public VaccinePresenter toVaccinePresenter(Vaccine vaccine) {
-        return VaccinePresenter.builder()
-                .vaccineId(vaccine.getVaccineId())
-                .name(vaccine.getName())
-                .description(vaccine.getDescription())
+    public EmployeeVaccine toEmployeeVaccine(EmployeeVaccinePresenter employeeVaccinePresenter) {
+        SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date1 = null;
+        try {
+            date1 = formatter1.parse(employeeVaccinePresenter.getDate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return EmployeeVaccine.builder()
+                .employeeVaccineId(employeeVaccinePresenter.getEmployeeVaccineId() != null
+                        ? employeeVaccinePresenter.getEmployeeVaccineId() : UUID.randomUUID())
+                .date(date1)
+                .dose(employeeVaccinePresenter.getDose())
+                .vaccine(vaccineService.toVaccine(employeeVaccinePresenter.getVaccinePresenter()))
                 .build();
+    }
+
+    @Override
+    public EmployeePresenter saveUpdateEmployee(EmployeePresenter employeePresenter) {
+        SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date1 = null;
+        try {
+            date1 = formatter1.parse(employeePresenter.getDateOfBirth());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Set<EmployeeVaccine> employeeVaccines = new HashSet<>();
+        employeePresenter.getEmployeeVaccinePresenters().forEach(employeeVaccinePresenter -> {
+            employeeVaccines.add(toEmployeeVaccine(employeeVaccinePresenter));
+        });
+        Employee employee = new Employee();
+        if (employeePresenter.getEmployeeId() != null) {
+            employee = employeeRepository.findById(employeePresenter.getEmployeeId()).get();
+        }
+        Employee finalEmployee = employee;
+        employeeVaccines.forEach(employeeVaccine -> {
+            employeeVaccine.setEmployee(finalEmployee);
+            employeeVaccineService.saveEmployeeVaccine(employeeVaccine);
+        });
+        employee.setDni(employeePresenter.getDni());
+        employee.setFirstName(employeePresenter.getFirstName());
+        employee.setLastName(employeePresenter.getLastName());
+        employee.setMail(employeePresenter.getMail());
+        employee.setDateOfBirth(date1);
+        employee.setAddress(employeePresenter.getAddress());
+        employee.setPhone(employeePresenter.getPhone());
+        employee.setStatus(employeePresenter.getStatus());
+
+        Employee employeeSaved = employeeRepository.save(employee);
+        return toEmployeePresenter(employeeSaved);
     }
 
     @Override

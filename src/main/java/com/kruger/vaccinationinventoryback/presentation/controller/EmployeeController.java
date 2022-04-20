@@ -3,32 +3,46 @@ package com.kruger.vaccinationinventoryback.presentation.controller;
 import com.kruger.vaccinationinventoryback.presentation.Paginator;
 import com.kruger.vaccinationinventoryback.presentation.presenter.EmployeePresenter;
 import com.kruger.vaccinationinventoryback.service.EmployeeService;
+import com.sun.istack.NotNull;
 import lombok.Generated;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Generated
 @RestController
 public class EmployeeController {
     @Autowired
-    EmployeeService workOrderService;
+    EmployeeService employeeService;
 
     @GetMapping("/getEmployeesPaginated")
-        public Paginator getEmployeesPaginated(String searchValue, Integer page, Integer size) {
-        searchValue = searchValue.replace(' ', '%');
+    public Paginator getEmployeesPaginated(@RequestParam(required = false) String searchValue,
+                                           @RequestParam("page") Integer page,
+                                           @RequestParam("size") Integer size,
+                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date initDate,
+                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endDate,
+                                           @RequestParam(name = "status", required = false) String[] status) {
+        if (!searchValue.equals("null") && !searchValue.isEmpty()) {
+            searchValue = searchValue.replace(' ', '%');
+        }
+
         Pageable pageable = PageRequest.of(page, size);
 
-        return workOrderService.getEmployeesPaginated(searchValue, pageable);
+        return employeeService.getEmployeesPaginated(searchValue, initDate, endDate, status, pageable);
     }
 
     @GetMapping("/getWorkOrderById")
-    public EmployeePresenter getEmployeeById(@RequestParam("employeeId") UUID employeeId){
-        return workOrderService.getEmployeeById(employeeId) ;
+    public EmployeePresenter getEmployeeById(@RequestParam("employeeId") UUID employeeId) {
+        return employeeService.getEmployeeById(employeeId);
+    }
+
+    @PostMapping("saveUpdateEmployee")
+    public EmployeePresenter saveUpdateEmployee(@RequestBody @NotNull EmployeePresenter employeePresenter) {
+        return employeeService.saveUpdateEmployee(employeePresenter);
     }
 }
