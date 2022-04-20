@@ -16,9 +16,9 @@ public interface EmployeeRepository extends CrudRepository<Employee, UUID> {
     @Query("SELECT e " +
             "FROM Employee e " +
             "left JOIN e.employeeVaccines ev " +
-            "WHERE LOWER(e.dni) like LOWER(CONCAT('%',:searchValue,'%')) " +
+            "WHERE (LOWER(e.dni) like LOWER(CONCAT('%',:searchValue,'%')) " +
             "OR LOWER(e.firstName) like LOWER(CONCAT('%',:searchValue,'%')) " +
-            "OR LOWER(e.lastName) like LOWER(CONCAT('%',:searchValue,'%')) " +
+            "OR LOWER(e.lastName) like LOWER(CONCAT('%',:searchValue,'%'))) " +
             "AND (cast(ev.date as string) between coalesce(cast(:initDate as string), cast(ev.date as string)) " +
             "and coalesce(cast(:endDate as string), cast(ev.date as string))) " +
             "AND e.status in :status ")
